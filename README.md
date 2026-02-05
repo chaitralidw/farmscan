@@ -1,73 +1,120 @@
-# Welcome to your Lovable project
+# 🌱 CropGuard Scan: AI-Powered Plant Disease Detection
 
-## Project info
+CropGuard Scan is a state-of-the-art mobile-first web application designed to help farmers and gardeners identify plant diseases early. Using a custom-trained **MobileNetV2** deep learning model and **Supabase** for real-time data persistence, CropGuard provides instant analysis and treatment recommendations.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+---
 
-## How can I edit this code?
+## ✨ Key Features
 
-There are several ways of editing your application.
+*   **🤖 AI Disease Detection**: Upload or take a photo of a plant leaf to get an instant diagnosis.
+*   **📊 Dynamic Statistics**: Track your scanning history, healthy plant ratio, and average detection confidence.
+*   **🔔 Real-Time Alerts**: Receive personalized notifications about disease outbreaks in your area.
+*   **🌐 Multilingual Support**: Fully translated into English, Hindi, Bengali, Telugu, Marathi, and Tamil.
+*   **📂 History Management**: Save and review all past scans with their corresponding localized treatment plans.
+*   **👤 Secure Authentication**: User profiles and data privacy powered by Supabase Auth and Row Level Security (RLS).
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 🛠️ Technology Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+### Frontend
+- **Framework**: React 18 with Vite
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS & Framer Motion
+- **UI Components**: Shadcn UI & Lucide Icons
+- **State Management**: React Query & Context API
 
-**Use your preferred IDE**
+### Backend (AI Engine)
+- **Engine**: FastAPI (Python 3.9+)
+- **Model**: TensorFlow / Keras (MobileNetV2)
+- **Processing**: Pillow & NumPy
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Database & Auth
+- **Provider**: Supabase
+- **Features**: PostgreSQL, Auth, Row Level Security (RLS)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🚀 Getting Started
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 1. Frontend Setup
+```bash
+# Install dependencies
+npm install
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### 2. AI Model Server Setup
+Located in the `/ai` directory.
+```bash
+cd ai
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Windows: .\venv\Scripts\activate
 
-**Use GitHub Codespaces**
+# Install requirements
+pip install -r requirements.txt
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Start the AI server
+python app.py
+```
+*The server runs on `http://localhost:8000`. Ensure this is running for the Scan feature to work.*
 
-## What technologies are used for this project?
+### 3. Supabase Configuration
+Create the following tables and run the SQL below in your Supabase SQL Editor.
 
-This project is built with:
+#### Tables Schema:
+- `profiles`: `id` (uuid, PK), `full_name` (text), `created_at` (timestamp)
+- `scans`: `id` (uuid, PK), `user_id` (uuid, FK), `image_url` (text), `disease_id` (text), `confidence` (float), `is_healthy` (boolean), `created_at` (timestamp)
+- `alerts`: `id` (uuid, PK), `user_id` (uuid, FK), `title` (text), `message` (text), `is_read` (boolean), `created_at` (timestamp)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+#### Required SQL (RLS Policies):
+```sql
+-- Enable RLS
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE scans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE alerts ENABLE ROW LEVEL SECURITY;
 
-## How can I deploy this project?
+-- Profiles Policies
+CREATE POLICY "Users can manage own profile" ON profiles FOR ALL USING (auth.uid() = id);
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+-- Scans Policies
+CREATE POLICY "Users can view own scans" ON scans FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own scans" ON scans FOR INSERT WITH CHECK (auth.uid() = user_id);
 
-## Can I connect a custom domain to my Lovable project?
+-- Alerts Policies
+CREATE POLICY "Users can manage own alerts" ON alerts FOR ALL USING (auth.uid() = user_id);
+```
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 📁 Project Structure
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```text
+├── ai/                 # Python AI Model Server
+│   ├── model/          # MobileNetV2 .h5 model file
+│   └── app.py          # FastAPI application
+├── src/
+│   ├── components/     # Reusable UI components
+│   ├── contexts/       # Auth, Language, and Global state
+│   ├── data/           # Disease database & recommendations
+│   ├── integrations/   # Supabase client & types
+│   ├── pages/          # Main application views
+│   └── types/          # TypeScript definitions
+└── public/             # Static assets
+```
+
+---
+
+## 📈 Future Roadmap
+- [ ] Offline scanning support using TensorFlow.js.
+- [ ] Community forum for farmers to share advice.
+- [ ] Marketplace integration for recommended fertilizers/pesticides.
+- [ ] Weather-based disease risk forecasting.
+
+---
+
+**Developed with ❤️ for the future of farming.**

@@ -3,7 +3,7 @@ export interface Disease {
   name: string;
   nameHindi: string;
   crop: string;
-  severity: 'low' | 'medium' | 'high';
+  severity: "low" | "medium" | "high";
   description: string;
   symptoms: string[];
   treatment: string[];
@@ -29,11 +29,15 @@ export interface Crop {
   diseases: Disease[];
 }
 
-export type Language = 'en' | 'hi';
+export type Language = "en" | "hi" | "bn" | "te" | "mr" | "ta";
 
 export interface Translation {
   [key: string]: {
     en: string;
     hi: string;
+    bn?: string;
+    te?: string;
+    mr?: string;
+    ta?: string;
   };
 }

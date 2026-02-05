@@ -42,7 +42,7 @@ export default function DiseasesPage() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input
-            placeholder="Search diseases..."
+            placeholder={t("common.search")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 h-12 rounded-xl"
@@ -52,7 +52,7 @@ export default function DiseasesPage() {
         {/* Crop Filter Tabs */}
         <Tabs defaultValue="all" onValueChange={setSelectedCrop}>
           <TabsList className="w-full justify-start overflow-x-auto">
-            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="all">{t("common.all")}</TabsTrigger>
             {crops.map(crop => (
               <TabsTrigger key={crop.id} value={crop.id}>
                 {crop.icon} {language === 'hi' ? crop.nameHindi : crop.name}
@@ -73,7 +73,7 @@ export default function DiseasesPage() {
             ))
           ) : (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">No diseases found</p>
+              <p className="text-muted-foreground">{t("common.noDiseases")}</p>
             </div>
           )}
         </div>

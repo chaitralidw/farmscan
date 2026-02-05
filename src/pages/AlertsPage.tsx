@@ -6,41 +6,60 @@ import { Badge } from '@/components/ui/badge';
 import { Layout } from '@/components/layout/Layout';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { format } from 'date-fns';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { Loader2 } from 'lucide-react';
+import { Tables } from '@/integrations/supabase/types';
+
+type Alert = Tables<"alerts">;
 
 // Mock alerts for demo
-const mockAlerts = [
-  {
-    id: '1',
-    disease: 'Late Blight',
-    crop: 'tomato',
-    location: 'Within 5km',
-    timestamp: new Date(Date.now() - 7200000),
-    count: 3,
-    severity: 'high',
-  },
-  {
-    id: '2',
-    disease: 'Early Blight',
-    crop: 'potato',
-    location: 'Within 10km',
-    timestamp: new Date(Date.now() - 86400000),
-    count: 7,
-    severity: 'medium',
-  },
-  {
-    id: '3',
-    disease: 'Bacterial Spot',
-    crop: 'pepper',
-    location: 'Within 15km',
-    timestamp: new Date(Date.now() - 172800000),
-    count: 2,
-    severity: 'low',
-  },
-];
+// removed mockAlerts array
 
 export default function AlertsPage() {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      if (!user) return;
+
+      try {
+        const { data, error } = await supabase
+          .from("alerts")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setAlerts(data || []);
+      } catch (error) {
+        console.error("Error fetching alerts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAlerts();
+  }, [user]);
+
+  const markAsRead = async (alertId: string) => {
+    try {
+      const { error } = await supabase
+        .from("alerts")
+        .update({ is_read: true })
+        .eq("id", alertId);
+      
+      if (error) throw error;
+      setAlerts(prev => prev.map(a => a.id === alertId ? { ...a, is_read: true } : a));
+    } catch (error) {
+      console.error("Error marking alert as read:", error);
+    }
+  };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -87,37 +106,46 @@ export default function AlertsPage() {
 
         {/* Alerts List */}
         <div className="space-y-3">
-          {mockAlerts.map(alert => (
-            <Card key={alert.id} variant="interactive" className="p-4">
-              <div className="flex items-start gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-destructive/20 to-warning/20 flex items-center justify-center">
-                  <AlertCircle className="w-6 h-6 text-destructive" />
-                </div>
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-foreground">{alert.disease}</h3>
-                    <Badge variant="outline" className={getSeverityColor(alert.severity)}>
-                      {alert.severity}
-                    </Badge>
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : alerts.length > 0 ? (
+            alerts.map(alert => (
+              <Card 
+                key={alert.id} 
+                variant="interactive" 
+                className={`p-4 ${!alert.is_read ? 'border-l-4 border-l-primary' : ''}`}
+                onClick={() => markAsRead(alert.id)}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-destructive/20 to-warning/20 flex items-center justify-center">
+                    <AlertCircle className="w-6 h-6 text-destructive" />
                   </div>
                   
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span className="capitalize">{alert.crop}</span>
-                    <span>•</span>
-                    <span>{alert.count} reports</span>
-                  </div>
-                  
-                  <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
-                    <MapPin className="w-3 h-3" />
-                    <span>{alert.location}</span>
-                    <span>•</span>
-                    <span>{format(alert.timestamp, 'MMM d, h:mm a')}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-foreground">{alert.title}</h3>
+                      {!alert.is_read && <Badge className="bg-primary text-white">New</Badge>}
+                    </div>
+                    
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {alert.message}
+                    </p>
+                    
+                    <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
+                      <span>{format(new Date(alert.created_at), 'MMM d, h:mm a')}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            ))
+          ) : (
+            <div className="text-center py-12">
+              <Bell className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+              <p className="text-muted-foreground">No alerts at the moment</p>
+            </div>
+          )}
         </div>
       </div>
     </Layout>

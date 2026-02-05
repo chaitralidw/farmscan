@@ -6,59 +6,55 @@ import { RecentScanCard } from '@/components/home/RecentScanCard';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ScanResult } from '@/types/disease';
 import { diseases } from '@/data/diseases';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { Loader2 } from 'lucide-react';
 
 // Mock history for demo
-const mockHistory: ScanResult[] = [
-  {
-    id: '1',
-    imageUrl: 'https://images.unsplash.com/photo-1592921870789-04563d55041c?w=400&h=400&fit=crop',
-    timestamp: new Date(Date.now() - 3600000),
-    disease: diseases[0],
-    confidence: 0.92,
-    isHealthy: false,
-    crop: 'tomato',
-  },
-  {
-    id: '2',
-    imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82ber633?w=400&h=400&fit=crop',
-    timestamp: new Date(Date.now() - 86400000),
-    disease: null,
-    confidence: 0.98,
-    isHealthy: true,
-    crop: 'potato',
-  },
-  {
-    id: '3',
-    imageUrl: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&h=400&fit=crop',
-    timestamp: new Date(Date.now() - 172800000),
-    disease: diseases[3],
-    confidence: 0.85,
-    isHealthy: false,
-    crop: 'potato',
-  },
-  {
-    id: '4',
-    imageUrl: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=400&fit=crop',
-    timestamp: new Date(Date.now() - 259200000),
-    disease: diseases[1],
-    confidence: 0.78,
-    isHealthy: false,
-    crop: 'tomato',
-  },
-  {
-    id: '5',
-    imageUrl: 'https://images.unsplash.com/photo-1560806175-91d2d30abc99?w=400&h=400&fit=crop',
-    timestamp: new Date(Date.now() - 345600000),
-    disease: null,
-    confidence: 0.95,
-    isHealthy: true,
-    crop: 'pepper',
-  },
-];
+// removed mockHistory array
 
 export default function HistoryPage() {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [scans, setScans] = useState<ScanResult[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchScans = async () => {
+      if (!user) return;
+
+      try {
+        const { data, error } = await supabase
+          .from("scans")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        // Map database records to ScanResult type
+        const formattedScans: ScanResult[] = data.map(record => ({
+          id: record.id,
+          imageUrl: record.image_url,
+          timestamp: new Date(record.created_at),
+          disease: diseases.find(d => d.id === record.disease_id) || null,
+          confidence: record.confidence || 0,
+          isHealthy: record.is_healthy,
+          crop: diseases.find(d => d.id === record.disease_id)?.crop || 'unknown',
+        }));
+
+        setScans(formattedScans);
+      } catch (error) {
+        console.error("Error fetching scans:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchScans();
+  }, [user]);
 
   return (
     <Layout>
@@ -77,23 +73,27 @@ export default function HistoryPage() {
 
         {/* History List */}
         <div className="space-y-3">
-          {mockHistory.length > 0 ? (
-            mockHistory.map(scan => (
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : scans.length > 0 ? (
+            scans.map(scan => (
               <RecentScanCard 
                 key={scan.id} 
                 scan={scan}
-                onClick={() => {/* Navigate to scan detail */}}
+                onClick={() => navigate(`/result/${scan.id}`)}
               />
             ))
           ) : (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">No scan history yet</p>
+              <p className="text-muted-foreground">{t('common.noHistory')}</p>
               <Button 
                 variant="default" 
                 className="mt-4"
                 onClick={() => navigate('/scan')}
               >
-                Start Your First Scan
+                {t('common.startFirstScan')}
               </Button>
             </div>
           )}
