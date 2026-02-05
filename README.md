@@ -1,4 +1,4 @@
-# 🌱 CropGuard Scan: AI-Powered Plant Disease Detection
+# 🌱  FarmScan: AI-Powered Plant Disease Detection
 
 CropGuard Scan is a state-of-the-art mobile-first web application designed to help farmers and gardeners identify plant diseases early. Using a custom-trained **MobileNetV2** deep learning model and **Supabase** for real-time data persistence, CropGuard provides instant analysis and treatment recommendations.
 
