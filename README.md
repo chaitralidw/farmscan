@@ -7,10 +7,12 @@ CropGuard Scan is a state-of-the-art mobile-first web application designed to he
 ## ✨ Key Features
 
 *   **🤖 AI Disease Detection**: Upload or take a photo of a plant leaf to get an instant diagnosis.
+*   **🗣️ Text-to-Speech Accessibility**: Integrated read-aloud functionality for accessibility and ease of use.
 *   **📊 Dynamic Statistics**: Track your scanning history, healthy plant ratio, and average detection confidence.
 *   **🔔 Real-Time Alerts**: Receive personalized notifications about disease outbreaks in your area.
 *   **🌐 Multilingual Support**: Fully translated into English, Hindi, Bengali, Telugu, Marathi, and Tamil.
 *   **📂 History Management**: Save and review all past scans with their corresponding localized treatment plans.
+*   **🔍 Detailed Disease Insights**: Comprehensive information pages for identified diseases and scan results.
 *   **👤 Secure Authentication**: User profiles and data privacy powered by Supabase Auth and Row Level Security (RLS).
 
 ---
@@ -20,7 +22,7 @@ CropGuard Scan is a state-of-the-art mobile-first web application designed to he
 ### Frontend
 - **Framework**: React 18 with Vite
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS & Framer Motion
+- **Styling**: Tailwind CSS & Framer Motion ("Farmscan Fresh" Teal/Pink Palette)
 - **UI Components**: Shadcn UI & Lucide Icons
 - **State Management**: React Query & Context API
 
