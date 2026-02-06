@@ -11,29 +11,28 @@ interface StatCardProps {
 }
 
 export function StatCard({ icon, label, value, color = 'primary' }: StatCardProps) {
-  const colorClasses = {
-    primary: 'from-primary/20 to-primary/5 text-primary',
-    success: 'from-success/20 to-success/5 text-success',
-    warning: 'from-warning/20 to-warning/5 text-warning',
-    destructive: 'from-destructive/20 to-destructive/5 text-destructive',
+  const colorMap = {
+    primary: 'bg-primary/10 text-primary border-primary/20',
+    success: 'bg-success/10 text-success border-success/20',
+    warning: 'bg-warning/10 text-warning border-warning/20',
+    destructive: 'bg-destructive/10 text-destructive border-destructive/20',
   };
 
   return (
-    <Card variant="elevated" className="overflow-hidden">
+    <Card variant="default" className={cn(
+      "p-4 flex flex-col items-center justify-center text-center group hover:scale-105 transition-transform duration-300",
+      colorMap[color]
+    )}>
       <div className={cn(
-        "p-4 bg-gradient-to-br",
-        colorClasses[color]
+        "w-12 h-12 rounded-2xl flex items-center justify-center mb-3 transition-colors",
+        "bg-white dark:bg-black/20 shadow-sm"
       )}>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center shadow-sm">
-            {icon}
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-foreground">{value}</p>
-            <p className="text-xs text-muted-foreground">{label}</p>
-          </div>
-        </div>
+        {icon}
       </div>
+      <p className="text-xl font-bold text-foreground mb-0.5">{value}</p>
+      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground leading-tight">
+        {label}
+      </p>
     </Card>
   );
 }

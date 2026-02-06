@@ -135,22 +135,26 @@ export default function ScanPage() {
 
   return (
     <Layout>
-      <div className="px-4 py-6 space-y-6 max-w-lg mx-auto">
+      <div className="px-4 py-8 space-y-8 max-w-lg mx-auto pb-32">
         {/* Header */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <Button 
-            variant="ghost" 
+            variant="glass" 
             size="icon"
             onClick={() => navigate(-1)}
+            className="rounded-2xl"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-xl font-bold text-foreground">{t('scan.title')}</h1>
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-black text-foreground tracking-tight">{t('scan.title')}</h1>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">AI Core Imaging</p>
+          </div>
         </div>
 
         {/* Show result or upload interface */}
         {result ? (
-          <>
+          <div className="space-y-6 animate-fade-in">
             <ResultCard 
               disease={result.disease}
               confidence={result.confidence}
@@ -158,23 +162,23 @@ export default function ScanPage() {
               imageUrl={selectedImage!}
             />
             
-            <div className="flex gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <Button 
                 variant="outline" 
-                className="flex-1"
+                size="lg"
                 onClick={handleScanAgain}
               >
                 {t('result.scanAgain')}
               </Button>
               <Button 
-                variant="default" 
-                className="flex-1"
+                variant="scan" 
+                size="lg"
                 onClick={handleSave}
                 disabled={isSaving}
               >
                 {isSaving ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                     Saving...
                   </>
                 ) : (
@@ -182,9 +186,9 @@ export default function ScanPage() {
                 )}
               </Button>
             </div>
-          </>
+          </div>
         ) : (
-          <>
+          <div className="space-y-8 animate-fade-in">
             <ImageUploader 
               onImageSelect={handleImageSelect}
               selectedImage={selectedImage}
@@ -195,23 +199,25 @@ export default function ScanPage() {
               <Button 
                 variant="scan" 
                 size="xl"
-                className="w-full"
+                className="w-full relative group overflow-hidden"
                 onClick={handleAnalyze}
                 disabled={isAnalyzing}
               >
                 {isAnalyzing ? (
                   <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    {t('scan.analyzing')}
+                    <Loader2 className="w-6 h-6 mr-3 animate-spin" />
+                    <span className="text-xl tracking-tight">{t('scan.analyzing')}</span>
                   </>
                 ) : (
-                  <>{t('scan.analyzeLeaf')}</>
+                  <span className="text-xl tracking-tight">{t('scan.analyzeLeaf')}</span>
                 )}
               </Button>
             ) : (
-              <ScanTips />
+              <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
+                <ScanTips />
+              </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </Layout>

@@ -69,17 +69,21 @@ export default function HistoryPage() {
 
   return (
     <Layout>
-      <div className="px-4 py-6 space-y-6 max-w-lg mx-auto">
+      <div className="px-4 py-8 space-y-8 max-w-lg mx-auto pb-32">
         {/* Header */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <Button 
-            variant="ghost" 
+            variant="glass" 
             size="icon"
             onClick={() => navigate(-1)}
+            className="rounded-2xl"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-xl font-bold text-foreground">{t('nav.history')}</h1>
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-black text-foreground tracking-tight">{t('nav.history')}</h1>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">Archived Scans</p>
+          </div>
         </div>
 
         {/* History List */}

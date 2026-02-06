@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,115 +6,115 @@
 
 @layer base {
   :root {
-    /* Earthy agricultural palette */
-    --background: 85 25% 97%;
-    --foreground: 142 30% 15%;
+    /* "Midnight Lavender & Copper" - Unique & Decent Palette */
+    --background: 260 30% 99%;
+    --foreground: 260 50% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 142 30% 15%;
+    --card-foreground: 260 50% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 142 30% 15%;
+    --popover-foreground: 260 50% 10%;
 
-    /* Fresh green primary */
-    --primary: 142 64% 38%;
+    /* Sophisticated Indigo-Lavender */
+    --primary: 262 60% 55%;
     --primary-foreground: 0 0% 100%;
 
-    /* Soft sage secondary */
-    --secondary: 138 25% 90%;
-    --secondary-foreground: 142 30% 20%;
+    /* Warm Sand / Slate */
+    --secondary: 260 20% 95%;
+    --secondary-foreground: 260 45% 20%;
 
-    --muted: 85 15% 92%;
-    --muted-foreground: 142 15% 45%;
+    --muted: 260 15% 94%;
+    --muted-foreground: 260 15% 40%;
 
-    /* Warm earth accent */
-    --accent: 35 85% 55%;
-    --accent-foreground: 35 90% 15%;
+    /* Muted Terra Copper */
+    --accent: 25 70% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    /* Disease alert red */
-    --destructive: 0 72% 51%;
+    /* Refined Ruby */
+    --destructive: 350 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Success/healthy green */
-    --success: 142 76% 36%;
+    /* Professional Teal (Success) */
+    --success: 175 60% 45%;
     --success-foreground: 0 0% 100%;
 
-    /* Warning amber */
-    --warning: 38 92% 50%;
-    --warning-foreground: 38 90% 15%;
+    /* Deep Amber (Warning) */
+    --warning: 40 95% 45%;
+    --warning-foreground: 0 0% 100%;
 
-    --border: 142 20% 85%;
-    --input: 142 20% 90%;
-    --ring: 142 64% 38%;
+    --border: 260 20% 90%;
+    --input: 260 20% 92%;
+    --ring: 262 60% 55%;
 
-    --radius: 1rem;
+    --radius: 1.25rem;
 
-    --sidebar-background: 138 25% 96%;
-    --sidebar-foreground: 142 30% 20%;
-    --sidebar-primary: 142 64% 38%;
+    --sidebar-background: 260 30% 98%;
+    --sidebar-foreground: 260 45% 20%;
+    --sidebar-primary: 262 60% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 138 25% 90%;
-    --sidebar-accent-foreground: 142 30% 20%;
-    --sidebar-border: 142 20% 85%;
-    --sidebar-ring: 142 64% 38%;
+    --sidebar-accent: 260 20% 95%;
+    --sidebar-accent-foreground: 260 45% 20%;
+    --sidebar-border: 260 20% 90%;
+    --sidebar-ring: 262 60% 55%;
 
-    --font-heading: "Poppins", sans-serif;
+    --font-heading: "Outfit", sans-serif;
     --font-body: "Inter", sans-serif;
   }
 
   .dark {
-    --background: 142 30% 8%;
-    --foreground: 85 25% 95%;
+    --background: 260 40% 4%;
+    --foreground: 260 20% 98%;
 
-    --card: 142 25% 12%;
-    --card-foreground: 85 25% 95%;
+    --card: 260 40% 7%;
+    --card-foreground: 260 20% 98%;
 
-    --popover: 142 25% 12%;
-    --popover-foreground: 85 25% 95%;
+    --popover: 260 40% 7%;
+    --popover-foreground: 260 20% 98%;
 
-    --primary: 142 64% 45%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 262 70% 65%;
+    --primary-foreground: 260 40% 5%;
 
-    --secondary: 142 20% 20%;
-    --secondary-foreground: 85 25% 90%;
+    --secondary: 260 30% 12%;
+    --secondary-foreground: 260 20% 95%;
 
-    --muted: 142 15% 18%;
-    --muted-foreground: 142 15% 60%;
+    --muted: 260 30% 10%;
+    --muted-foreground: 260 15% 70%;
 
-    --accent: 35 75% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 25 80% 65%;
+    --accent-foreground: 260 40% 5%;
 
-    --destructive: 0 62% 45%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 350 80% 60%;
+    --destructive-foreground: 260 40% 5%;
 
-    --success: 142 70% 40%;
-    --success-foreground: 0 0% 100%;
+    --success: 175 70% 55%;
+    --success-foreground: 260 40% 5%;
 
-    --warning: 38 85% 45%;
-    --warning-foreground: 0 0% 100%;
+    --warning: 40 90% 55%;
+    --warning-foreground: 260 40% 5%;
 
-    --border: 142 20% 22%;
-    --input: 142 20% 22%;
-    --ring: 142 64% 45%;
+    --border: 260 30% 15%;
+    --input: 260 30% 15%;
+    --ring: 262 70% 65%;
 
-    --sidebar-background: 142 25% 10%;
-    --sidebar-foreground: 85 25% 90%;
-    --sidebar-primary: 142 64% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 142 20% 18%;
-    --sidebar-accent-foreground: 85 25% 90%;
-    --sidebar-border: 142 20% 22%;
-    --sidebar-ring: 142 64% 45%;
+    --sidebar-background: 260 40% 5%;
+    --sidebar-foreground: 260 20% 95%;
+    --sidebar-primary: 262 70% 65%;
+    --sidebar-primary-foreground: 260 40% 5%;
+    --sidebar-accent: 260 30% 12%;
+    --sidebar-accent-foreground: 260 20% 95%;
+    --sidebar-border: 260 30% 15%;
+    --sidebar-ring: 262 70% 65%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border selection:bg-primary/20 selection:text-primary;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-family: var(--font-body);
   }
 
@@ -125,11 +125,24 @@
   h5,
   h6 {
     font-family: var(--font-heading);
+    @apply tracking-tight font-bold text-foreground;
   }
 }
 
 @layer utilities {
+  .glass {
+    @apply bg-white/70 dark:bg-black/70 backdrop-blur-xl border border-white/30 dark:border-white/10;
+  }
+  
+  .glass-card {
+    @apply bg-white/50 dark:bg-black/50 backdrop-blur-md border border-white/30 dark:border-white/10 shadow-xl;
+  }
+
   .text-balance {
     text-wrap: balance;
+  }
+
+  .text-gradient {
+    @apply text-primary animate-pulse-gentle;
   }
 }

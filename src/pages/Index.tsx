@@ -84,61 +84,68 @@ const Index = () => {
 
   return (
     <Layout>
-      <div className="px-4 py-6 space-y-6 max-w-lg mx-auto">
+      <div className="px-4 py-8 space-y-8 max-w-lg mx-auto pb-32">
         {/* Hero Section with Banner */}
-        <div className="relative rounded-2xl overflow-hidden">
+        <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl group">
           <img
             src={heroBanner}
             alt="Healthy crops"
-            className="w-full h-48 object-cover"
+            className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-110"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-4 text-center">
-            <h1 className="text-2xl font-bold text-foreground">
+          <div className="absolute inset-0 bg-background/20" />
+          <div className="absolute bottom-6 left-6 right-6 glass p-6 rounded-3xl border-white/20 animate-fade-in">
+            <h1 className="text-3xl font-extrabold text-foreground leading-tight tracking-tight">
               {t("home.title")}
             </h1>
-            <p className="text-muted-foreground text-sm mt-1">
+            <p className="text-muted-foreground text-sm mt-2 font-medium">
               {t("home.subtitle")}
             </p>
           </div>
         </div>
 
-        {/* Scan Button */}
-        <Button
-          variant="scan"
-          size="xl"
-          className="w-full"
-          onClick={() => navigate("/scan")}
-        >
-          <Camera className="w-6 h-6 mr-2" />
-          {t("home.scanNow")}
-        </Button>
+        {/* Scan Action Card */}
+        <div className="relative group">
+          <div className="absolute -inset-1 bg-primary rounded-[2rem] blur opacity-10 group-hover:opacity-20 transition duration-1000 group-hover:duration-200"></div>
+          <Button
+            variant="scan"
+            size="xl"
+            className="w-full relative"
+            onClick={() => navigate("/scan")}
+          >
+            <Camera className="w-8 h-8 mr-3" />
+            <span className="text-xl tracking-tight">{t("home.scanNow")}</span>
+          </Button>
+        </div>
 
         {/* Stats Grid */}
-        <div>
-          <h2 className="text-lg font-semibold text-foreground mb-3">
-            {t("home.quickStats")}
-          </h2>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold tracking-tight text-foreground">
+              {t("home.quickStats")}
+            </h2>
+          </div>
           {loading ? (
-            <div className="flex justify-center py-8 bg-muted/30 rounded-2xl">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            <div className="grid grid-cols-3 gap-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="h-32 bg-muted/30 rounded-[2rem] animate-pulse" />
+              ))}
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-4">
               <StatCard
-                icon={<ScanIcon className="w-5 h-5 text-primary" />}
+                icon={<ScanIcon className="w-6 h-6 text-primary" />}
                 label={t("home.totalScans")}
                 value={stats.total}
                 color="primary"
               />
               <StatCard
-                icon={<CheckCircle className="w-5 h-5 text-success" />}
+                icon={<CheckCircle className="w-6 h-6 text-success" />}
                 label={t("home.healthyPlants")}
                 value={stats.healthy}
                 color="success"
               />
               <StatCard
-                icon={<AlertTriangle className="w-5 h-5 text-warning" />}
+                icon={<AlertTriangle className="w-6 h-6 text-warning" />}
                 label={t("home.diseasesFound")}
                 value={stats.diseases}
                 color="warning"

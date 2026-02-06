@@ -61,25 +61,34 @@ export function ResultCard({ disease, confidence, isHealthy, imageUrl }: ResultC
   const confidencePercent = Math.round(confidence * 100);
 
   return (
-    <div className="space-y-4 animate-slide-up">
+    <div className="space-y-6 animate-slide-up">
       {/* Main Result Card */}
-      <Card variant={variant} className="overflow-hidden">
-        <div className="relative">
+      <Card variant={variant} className="overflow-hidden border-0 shadow-2xl">
+        <div className="relative group">
           <img 
             src={imageUrl} 
             alt="Scanned leaf" 
-            className="w-full h-48 object-cover"
+            className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-black/40" />
+          
+          <div className="absolute top-4 right-4 glass px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white border-white/10">
+            {isHealthy ? 'System Check: Clear' : 'Analysis Alert'}
+          </div>
+
           <div className={cn(
-            "absolute bottom-4 left-4 right-4 flex items-center gap-3 p-3 rounded-xl",
-            bgColor,
-            borderColor,
-            "border backdrop-blur-sm"
+            "absolute bottom-6 left-6 right-6 flex items-center gap-4 p-5 rounded-[2rem]",
+            "glass border-white/20 shadow-2xl"
           )}>
-            <StatusIcon className={cn("w-8 h-8", color)} />
+            <div className={cn(
+              "w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg",
+              bgColor,
+              "text-white"
+            )}>
+              <StatusIcon className="w-7 h-7" />
+            </div>
             <div className="flex-1">
-              <h2 className="text-lg font-bold text-foreground">
+              <h2 className="text-xl font-black text-white leading-tight tracking-tight">
                 {isHealthy 
                   ? t('result.healthy')
                   : language === 'hi' 
@@ -88,9 +97,9 @@ export function ResultCard({ disease, confidence, isHealthy, imageUrl }: ResultC
                 }
               </h2>
               {!isHealthy && (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs font-bold text-white/70 uppercase tracking-widest mt-0.5">
                   {disease?.crop && (
-                    <span className="capitalize">{disease.crop}</span>
+                    <span>{disease.crop}</span>
                   )}
                 </p>
               )}
@@ -98,44 +107,58 @@ export function ResultCard({ disease, confidence, isHealthy, imageUrl }: ResultC
           </div>
         </div>
 
-        <CardContent className="pt-4">
+        <CardContent className="p-8">
           {/* Confidence Score */}
-          <div className="mb-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-muted-foreground">
-                {t('result.confidence')}
-              </span>
-              <span className={cn("text-lg font-bold", color)}>
-                {confidencePercent}%
-              </span>
+          <div className="mb-8">
+            <div className="flex justify-between items-end mb-3">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-1">
+                  {t('result.confidence')}
+                </span>
+                <span className={cn("text-3xl font-black tracking-tighter", color)}>
+                  {confidencePercent}<span className="text-lg ml-0.5">%</span>
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase opacity-50">Precision AI</span>
+              </div>
             </div>
-            <Progress 
-              value={confidencePercent} 
-              className="h-2"
-            />
+            <div className="relative h-3 bg-muted rounded-full overflow-hidden">
+               <div 
+                 className={cn("absolute inset-0 transition-all duration-1000 ease-out", bgColor)}
+                 style={{ width: `${confidencePercent}%` }}
+               />
+            </div>
           </div>
 
           {/* Description */}
-          <p className="text-sm text-muted-foreground">
-            {disease?.description || (isHealthy && "Your plant appears to be healthy! No diseases detected.")}
-          </p>
+          <div className="relative p-6 rounded-3xl bg-muted/30 border border-border/50">
+            <p className="text-sm font-medium leading-relaxed text-foreground/80 italic">
+              "{disease?.description || (isHealthy && "Your plant shows optimal chlorophyll levels and structural integrity. No anomalies detected by the AI core.")}"
+            </p>
+          </div>
         </CardContent>
       </Card>
 
       {/* Details Accordion */}
       {disease && !isHealthy && (
-        <Card variant="elevated">
+        <Card variant="default" className="overflow-hidden border-border/50 shadow-xl">
           <Accordion type="multiple" className="w-full">
             {disease.symptoms.length > 0 && (
-              <AccordionItem value="symptoms" className="border-b-0">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="text-sm font-semibold">{t('result.symptoms')}</span>
+              <AccordionItem value="symptoms" className="border-b border-border/50">
+                <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-muted/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center">
+                      <AlertCircle className="w-4 h-4 text-destructive" />
+                    </div>
+                    <span className="text-sm font-bold uppercase tracking-wider">{t('result.symptoms')}</span>
+                  </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4">
-                  <ul className="space-y-2">
+                <AccordionContent className="px-6 pb-6 pt-2">
+                  <ul className="grid gap-3">
                     {disease.symptoms.map((symptom, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                        <span className="w-1.5 h-1.5 rounded-full bg-destructive mt-2" />
+                      <li key={index} className="flex gap-3 text-sm font-medium text-muted-foreground p-3 rounded-2xl bg-muted/20 border border-border/10">
+                        <span className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 flex-shrink-0" />
                         {symptom}
                       </li>
                     ))}
@@ -145,15 +168,20 @@ export function ResultCard({ disease, confidence, isHealthy, imageUrl }: ResultC
             )}
 
             {disease.treatment.length > 0 && (
-              <AccordionItem value="treatment" className="border-b-0">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="text-sm font-semibold">{t('result.treatment')}</span>
+              <AccordionItem value="treatment" className="border-b border-border/50">
+                <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-muted/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 text-primary" />
+                    </div>
+                    <span className="text-sm font-bold uppercase tracking-wider">{t('result.treatment')}</span>
+                  </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4">
-                  <ul className="space-y-2">
+                <AccordionContent className="px-6 pb-6 pt-2">
+                  <ul className="grid gap-3">
                     {disease.treatment.map((step, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                        <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <li key={index} className="flex gap-4 text-sm font-medium text-muted-foreground p-4 rounded-2xl bg-primary/5 border border-primary/10">
+                        <span className="w-6 h-6 rounded-full bg-primary text-white text-[10px] font-black flex items-center justify-center flex-shrink-0">
                           {index + 1}
                         </span>
                         {step}
@@ -165,19 +193,24 @@ export function ResultCard({ disease, confidence, isHealthy, imageUrl }: ResultC
             )}
 
             {disease.prevention.length > 0 && (
-              <AccordionItem value="prevention" className="border-b-0">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="text-sm font-semibold">{t('result.prevention')}</span>
+              <AccordionItem value="prevention" className="border-0">
+                <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-muted/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+                      <AlertTriangle className="w-4 h-4 text-success" />
+                    </div>
+                    <span className="text-sm font-bold uppercase tracking-wider">{t('result.prevention')}</span>
+                  </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4">
-                  <ul className="space-y-2">
+                <AccordionContent className="px-6 pb-6 pt-2">
+                  <div className="grid grid-cols-1 gap-2">
                     {disease.prevention.map((tip, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                        <span className="w-1.5 h-1.5 rounded-full bg-success mt-2" />
+                      <div key={index} className="flex items-center gap-3 text-sm font-medium text-muted-foreground p-3 rounded-2xl bg-success/5 border border-success/10">
+                        <div className="w-1.5 h-1.5 rounded-full bg-success flex-shrink-0" />
                         {tip}
-                      </li>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </AccordionContent>
               </AccordionItem>
             )}

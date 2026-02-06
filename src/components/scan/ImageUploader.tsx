@@ -191,7 +191,7 @@ export function ImageUploader({
 
         {/* Scanning animation overlay */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent animate-scan-line" />
+          <div className="absolute inset-x-0 h-1 bg-primary/50 animate-scan-line" />
         </div>
       </Card>
     );
@@ -227,7 +227,7 @@ export function ImageUploader({
               className="w-full aspect-square object-cover rounded-xl"
             />
             <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent animate-scan-line" />
+              <div className="absolute inset-x-0 h-1 bg-primary/50 animate-scan-line" />
             </div>
           </Card>
           <div className="grid grid-cols-2 gap-3">
@@ -267,7 +267,7 @@ export function ImageUploader({
             <div className="absolute bottom-4 right-4 w-12 h-12 border-b-4 border-r-4 border-primary rounded-br-lg" />
             
             {/* Center scanning line */}
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent opacity-70 animate-pulse" />
+            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-0.5 bg-primary/50 opacity-70 animate-pulse" />
           </div>
           
           {/* Flip camera button for mobile - positioned on top of video */}
@@ -312,7 +312,7 @@ export function ImageUploader({
         onDragLeave={handleDragLeave}
         onClick={() => fileInputRef.current?.click()}
       >
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-success/20 flex items-center justify-center mb-4">
+        <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-4">
           <ImageIcon className="w-10 h-10 text-primary" />
         </div>
         <p className="text-lg font-semibold text-foreground text-center mb-2">

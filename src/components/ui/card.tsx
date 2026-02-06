@@ -4,17 +4,17 @@ import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const cardVariants = cva(
-  "rounded-2xl border bg-card text-card-foreground transition-all duration-200",
+  "rounded-[2rem] border bg-card text-card-foreground transition-all duration-300",
   {
     variants: {
       variant: {
-        default: "shadow-sm",
-        elevated: "shadow-lg hover:shadow-xl",
-        interactive: "shadow-md hover:shadow-lg hover:scale-[1.01] cursor-pointer",
-        success: "border-success/30 bg-success/5",
-        warning: "border-warning/30 bg-warning/5",
-        danger: "border-destructive/30 bg-destructive/5",
-        glass: "bg-card/80 backdrop-blur-sm border-border/50",
+        default: "shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border-border/50",
+        elevated: "shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-none border-border/50",
+        interactive: "shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] hover:scale-[1.02] cursor-pointer",
+        success: "border-success/20 bg-success/5 shadow-[0_8px_30px_rgba(16,185,129,0.05)]",
+        warning: "border-warning/20 bg-warning/5 shadow-[0_8px_30px_rgba(245,158,11,0.05)]",
+        danger: "border-destructive/20 bg-destructive/5 shadow-[0_8px_30px_rgba(239,68,68,0.05)]",
+        glass: "glass-card",
       },
     },
     defaultVariants: {
