@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 
 export default function ScanPage() {
   const { t } = useLanguage();
-  const { user } = useAuth();
+  const { deviceId } = useAuth();
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -97,18 +97,16 @@ export default function ScanPage() {
   };
 
   const handleSave = async () => {
-    if (!user || !result || !selectedImage) {
-      toast.error("Please log in to save results");
+    if (!deviceId || !result || !selectedImage) {
+      toast.error("Unable to save: Device identification failed");
       return;
     }
 
     setIsSaving(true);
     try {
-      // In a real app, you'd upload the image to Supabase Storage first
-      // For now, we'll save the data URL or mock URL
       // @ts-expect-error - Supabase table insert type is incorrectly inferred as never
       const { error } = await supabase.from("scans").insert({
-        user_id: user.id,
+        user_id: deviceId,
         image_url: selectedImage,
         disease_id: result.disease?.id || null,
         confidence: result.confidence,

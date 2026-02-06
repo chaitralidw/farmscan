@@ -1,4 +1,3 @@
-import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
 
@@ -7,7 +6,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ element }: ProtectedRouteProps) {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
 
   if (loading) {
     return (
@@ -17,9 +16,6 @@ export function ProtectedRoute({ element }: ProtectedRouteProps) {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
+  // Everyone is "authenticated" via unique device ID now
   return <>{element}</>;
 }

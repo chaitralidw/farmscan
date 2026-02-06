@@ -17,20 +17,20 @@ import { Loader2 } from 'lucide-react';
 
 export default function HistoryPage() {
   const { t } = useLanguage();
-  const { user } = useAuth();
+  const { deviceId } = useAuth();
   const navigate = useNavigate();
   const [scans, setScans] = useState<ScanResult[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchScans = async () => {
-      if (!user) return;
+      if (!deviceId) return;
 
       try {
         const { data, error } = await supabase
           .from("scans")
           .select("*")
-          .eq("user_id", user.id)
+          .eq("user_id", deviceId)
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -65,7 +65,7 @@ export default function HistoryPage() {
     };
 
     fetchScans();
-  }, [user]);
+  }, [deviceId]);
 
   return (
     <Layout>

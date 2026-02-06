@@ -8,7 +8,6 @@ const navItems = [
   { to: '/history', icon: Clock, labelKey: 'nav.history' },
   { to: '/scan', icon: Camera, labelKey: 'nav.scan', isMain: true },
   { to: '/diseases', icon: BookOpen, labelKey: 'nav.diseases' },
-  { to: '/alerts', icon: Bell, labelKey: 'nav.alerts' },
 ];
 
 export function BottomNav() {
