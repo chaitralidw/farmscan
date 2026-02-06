@@ -61,8 +61,49 @@ export function Header() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <UserMenu />
         </div>
       </div>
     </header>
   );
 }
+
+function UserMenu() {
+  const { isAuthenticated, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  if (!isAuthenticated) {
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        className="rounded-full"
+        onClick={() => navigate("/login")}
+      >
+        <User className="w-5 h-5" />
+      </Button>
+    );
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="rounded-full">
+          <User className="w-5 h-5 text-primary" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-44 rounded-xl">
+        <DropdownMenuItem onClick={() => navigate("/profile")}>
+          Profile
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => signOut()} className="text-destructive">
+          <LogOut className="w-4 h-4 mr-2" />
+          Sign Out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+

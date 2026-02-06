@@ -2,10 +2,14 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { getDeviceId } from "@/lib/deviceId";
 import { supabase } from "@/integrations/supabase/client";
 
+import { Session, User } from "@supabase/supabase-js";
+
 interface AuthContextType {
   deviceId: string;
   loading: boolean;
-  user: { id: string } | null;
+  user: User | null; // This will now be the Supabase Auth user if logged in
+  session: Session | null;
+  isAuthenticated: boolean;
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
@@ -17,14 +21,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [deviceId, setDeviceId] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
+    // Initialize Device ID
     const initializeId = async () => {
       const id = getDeviceId();
       setDeviceId(id);
       
       try {
-        // Ensure profile exists for this device
+        // Ensure profile exists for this device (for anonymous usage)
         const { data, error } = await supabase
           .from("profiles")
           .select("device_id")
@@ -32,7 +38,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .maybeSingle();
 
         if (!data && !error) {
-          console.log("Creating new profile for device", id);
           // @ts-expect-error - Supabase type inference issue for insert
           await supabase.from("profiles").insert({
             device_id: id,
@@ -41,12 +46,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (err) {
         console.error("Profile auto-creation error:", err);
-      } finally {
-        setLoading(false);
       }
     };
-
+    
     initializeId();
+
+    // Initialize Supabase Auth
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
@@ -79,8 +97,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    localStorage.removeItem('cropguard_device_id');
-    window.location.reload();
+    // We don't clear device ID on auth signout, as they just revert to anonymous
+    window.location.href = "/";
   };
 
   return (
@@ -88,7 +106,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         deviceId,
         loading,
-        user: deviceId ? { id: deviceId } : null,
+        user: session?.user || null,
+        session,
+        isAuthenticated: !!session,
         signUp,
         signIn,
         signInWithGoogle,
