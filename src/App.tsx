@@ -14,6 +14,7 @@ import AlertsPage from "./pages/AlertsPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ProfilePage from "./pages/ProfilePage";
+import ResultDetailsPage from "./pages/ResultDetailsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,10 @@ const App = () => (
               <Route
                 path="/history"
                 element={<ProtectedRoute element={<HistoryPage />} />}
+              />
+              <Route
+                path="/scan/result/:id"
+                element={<ProtectedRoute element={<ResultDetailsPage />} />}
               />
               <Route
                 path="/diseases"

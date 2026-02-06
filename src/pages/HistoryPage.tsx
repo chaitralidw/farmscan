@@ -97,6 +97,7 @@ export default function HistoryPage() {
               <RecentScanCard 
                 key={scan.id} 
                 scan={scan}
+                onClick={() => navigate(`/scan/result/${scan.id}`)}
               />
             ))
           ) : (

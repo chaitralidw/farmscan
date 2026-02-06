@@ -1,6 +1,6 @@
 import { Volume2, VolumeX, Loader2 } from "lucide-react";
 import { Button } from "./button";
-import { useSpeech } from "@/hooks/useSpeech";
+import { useSpeech } from "@/hooks/use-speech";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
