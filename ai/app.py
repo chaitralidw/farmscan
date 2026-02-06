@@ -17,7 +17,12 @@ app = FastAPI()
 # Enable CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://farmscan-gray.vercel.app",
+        "https://farmscan-gray.vercel.app/",
+        "http://localhost:5173",
+        "http://localhost:8000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -84,13 +89,24 @@ async def predict(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(content)).convert('RGB')
     
     # Preprocess image
+    # 1. Center Crop to keep aspect ratio (prevents squishing)
+    width, height = image.size
+    min_dim = min(width, height)
+    left = (width - min_dim) / 2
+    top = (height - min_dim) / 2
+    right = (width + min_dim) / 2
+    bottom = (height + min_dim) / 2
+    image = image.crop((left, top, right, bottom))
+    
+    # 2. Resize to 224x224
     image = image.resize((224, 224))
+    
+    # 3. Convert to array and preprocess
     img_array = tf.keras.preprocessing.image.img_to_array(image)
     img_array = tf.expand_dims(img_array, 0)
     
-    # MobileNetV2 usually expects [-1, 1] normalization
-    # If the model was trained with 1/255.0, change this back
-    img_array = (img_array / 127.5) - 1.0 
+    # Use official MobileNetV2 preprocessing (scales to [-1, 1])
+    img_array = tf.keras.applications.mobilenet_v2.preprocess_input(img_array) 
     
     # Predict
     predictions = model.predict(img_array)
