@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getDeviceId } from "@/lib/deviceId";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AuthContextType {
   deviceId: string;
@@ -16,9 +17,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const id = getDeviceId();
-    setDeviceId(id);
-    setLoading(false);
+    const initializeId = async () => {
+      const id = getDeviceId();
+      setDeviceId(id);
+      
+      try {
+        // Ensure profile exists for this device
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("device_id")
+          .eq("device_id", id)
+          .maybeSingle();
+
+        if (!data && !error) {
+          console.log("Creating new profile for device", id);
+          // @ts-expect-error - Supabase type inference issue for insert
+          await supabase.from("profiles").insert({
+            device_id: id,
+            full_name: "Anonymous User",
+          });
+        }
+      } catch (err) {
+        console.error("Profile auto-creation error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeId();
   }, []);
 
   const signOut = async () => {

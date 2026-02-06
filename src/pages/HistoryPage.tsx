@@ -30,7 +30,7 @@ export default function HistoryPage() {
         const { data, error } = await supabase
           .from("scans")
           .select("*")
-          .eq("user_id", deviceId)
+          .eq("device_id", deviceId)
           .order("created_at", { ascending: false });
 
         if (error) throw error;

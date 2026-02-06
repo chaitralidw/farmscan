@@ -24,7 +24,7 @@ type DbScan = Tables<"scans">;
 
 const Index = () => {
   const { t } = useLanguage();
-  const { user } = useAuth();
+  const { deviceId } = useAuth();
   const navigate = useNavigate();
   const [scans, setScans] = useState<ScanResult[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,13 +36,13 @@ const Index = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) return;
+      if (!deviceId) return;
 
       try {
         const { data, error } = await supabase
           .from("scans")
           .select("*")
-          .eq("user_id", user.id)
+          .eq("device_id", deviceId)
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -51,15 +51,21 @@ const Index = () => {
           const dbScans = data as DbScan[];
           
           // Map to ScanResult type
-          const mappedScans: ScanResult[] = dbScans.map(s => ({
-            id: s.id,
-            imageUrl: s.image_url,
-            timestamp: new Date(s.created_at),
-            disease: diseases.find(d => d.id === s.disease_id) || null,
-            confidence: s.confidence || 0,
-            isHealthy: s.is_healthy,
-            crop: "tomato", // Default or extract from disease if possible
-          }));
+          const mappedScans: ScanResult[] = dbScans.map(s => {
+            const diseaseId = s.disease_id || "";
+            const foundDisease = diseases.find(d => d.id === diseaseId) || null;
+            const fallbackCrop = diseaseId.split('-')[0] || 'unknown';
+
+            return {
+              id: s.id,
+              imageUrl: s.image_url,
+              timestamp: new Date(s.created_at),
+              disease: foundDisease,
+              confidence: s.confidence || 0,
+              isHealthy: s.is_healthy,
+              crop: foundDisease?.crop || fallbackCrop,
+            };
+          });
 
           setScans(mappedScans.slice(0, 3)); // Only show last 3 on home
 
@@ -80,7 +86,7 @@ const Index = () => {
     };
 
     fetchData();
-  }, [user]);
+  }, [deviceId]);
 
   return (
     <Layout>

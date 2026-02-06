@@ -19,20 +19,20 @@ type Alert = Tables<"alerts">;
 
 export default function AlertsPage() {
   const { t } = useLanguage();
-  const { user } = useAuth();
+  const { deviceId } = useAuth();
   const navigate = useNavigate();
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchAlerts = async () => {
-      if (!user) return;
+      if (!deviceId) return;
 
       try {
         const { data, error } = await supabase
           .from("alerts")
           .select("*")
-          .eq("user_id", user.id)
+          .eq("device_id", deviceId)
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -45,7 +45,7 @@ export default function AlertsPage() {
     };
 
     fetchAlerts();
-  }, [user]);
+  }, [deviceId]);
 
   // const markAsRead = async (alertId: string) => {
   //   try {

@@ -11,21 +11,21 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
-          id: string
+          device_id: string
           full_name: string | null
           avatar_url: string | null
           location: string | null
           created_at: string
         }
         Insert: {
-          id: string
+          device_id: string
           full_name?: string | null
           avatar_url?: string | null
           location?: string | null
           created_at?: string
         }
         Update: {
-          id?: string
+          device_id?: string
           full_name?: string | null
           avatar_url?: string | null
           location?: string | null
@@ -35,7 +35,7 @@ export type Database = {
       scans: {
         Row: {
           id: string
-          user_id: string
+          device_id: string
           image_url: string
           disease_id: string | null
           confidence: number | null
@@ -44,7 +44,7 @@ export type Database = {
         }
         Insert: {
           id?: string
-          user_id: string
+          device_id: string
           image_url: string
           disease_id?: string | null
           confidence?: number | null
@@ -53,7 +53,7 @@ export type Database = {
         }
         Update: {
           id?: string
-          user_id?: string
+          device_id?: string
           image_url?: string
           disease_id?: string | null
           confidence?: number | null
@@ -64,7 +64,7 @@ export type Database = {
       alerts: {
         Row: {
           id: string
-          user_id: string
+          device_id: string
           title: string
           message: string
           is_read: boolean
@@ -72,7 +72,7 @@ export type Database = {
         }
         Insert: {
           id?: string
-          user_id: string
+          device_id: string
           title: string
           message: string
           is_read?: boolean
@@ -80,7 +80,7 @@ export type Database = {
         }
         Update: {
           id?: string
-          user_id?: string
+          device_id?: string
           title?: string
           message?: string
           is_read?: boolean

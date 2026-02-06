@@ -14,9 +14,10 @@ type ScanRecord = Tables<"scans">;
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { deviceId, signOut } = useAuth();
   const { language, setLanguage } = useLanguage();
   const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const [notifications, setNotifications] = useState(true);
@@ -30,18 +31,20 @@ export default function ProfilePage() {
   const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      if (!user) return;
+    const fetchData = async () => {
+      if (!deviceId) return;
+
       try {
-        const { data, error } = await supabase
+        // Fetch stats
+        const { data: scanData, error: scanError } = await supabase
           .from("scans")
           .select("*")
-          .eq("user_id", user.id);
+          .eq("device_id", deviceId);
 
-        if (error) throw error;
+        if (scanError) throw scanError;
 
-        if (data) {
-          const scans = data as ScanRecord[];
+        if (scanData) {
+          const scans = scanData as ScanRecord[];
           const total = scans.length;
           const healthy = scans.filter((s) => s.is_healthy).length;
           const diseases = total - healthy;
@@ -56,26 +59,32 @@ export default function ProfilePage() {
             avgConfidence: avgConf,
           });
         }
+
+        // Fetch profile
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("device_id", deviceId)
+          .maybeSingle();
+
+        if (profileError) throw profileError;
+        if (profileData) setProfile(profileData);
+
       } catch (err) {
-        console.error("Error fetching stats:", err);
+        console.error("Error fetching data:", err);
       } finally {
         setStatsLoading(false);
       }
     };
 
-    fetchStats();
-  }, [user]);
+    fetchData();
+  }, [deviceId]);
 
-  if (!user) {
+  if (!deviceId) {
     return (
       <Layout>
-        <div className="px-4 py-6 space-y-6 max-w-lg mx-auto">
-          <Card className="p-6 text-center">
-            <p className="text-muted-foreground mb-4">
-              Please sign in to view your profile
-            </p>
-            <Button onClick={() => navigate("/login")}>Sign In</Button>
-          </Card>
+        <div className="px-4 py-8 flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       </Layout>
     );
@@ -87,16 +96,16 @@ export default function ProfilePage() {
 
     try {
       await signOut();
-      navigate("/login");
+      navigate("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Sign out failed");
+      setError(err instanceof Error ? err.message : "Reset failed");
     } finally {
       setLoading(false);
     }
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(user.id);
+    navigator.clipboard.writeText(deviceId);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -123,45 +132,49 @@ export default function ProfilePage() {
         {/* Profile Info */}
         <Card className="p-6 space-y-4">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-success flex items-center justify-center">
-              <span className="text-2xl font-bold text-white">
-                {user.email?.[0].toUpperCase()}
+            <div className="w-16 h-16 rounded-3xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 rotate-12">
+              <span className="text-2xl font-black text-white -rotate-12">
+                Ai
               </span>
             </div>
             <div className="space-y-1">
-              <p className="text-lg font-semibold text-foreground">
-                Account Info
+              <p className="text-lg font-black text-foreground tracking-tight">
+                {profile?.full_name || "Device Identity"}
               </p>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">
+                {profile?.location || "Anonymous User"}
+              </p>
             </div>
           </div>
 
           <div className="space-y-2 pt-2">
-            <label className="text-sm font-medium text-muted-foreground">
-              Member Since
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">
+              Active Since
             </label>
-            <p className="text-sm">
-              {new Date(user.created_at).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+            <p className="text-sm font-bold">
+              {profile?.created_at 
+                ? new Date(profile.created_at).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "Initial Scan"}
             </p>
           </div>
 
           <div className="space-y-2 pt-2">
-            <label className="text-sm font-medium text-muted-foreground">
-              User ID
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">
+              Identity Key
             </label>
             <div className="flex items-center gap-2">
-              <p className="text-sm font-mono bg-muted px-3 py-2 rounded flex-1 truncate">
-                {user.id}
+              <p className="text-xs font-mono bg-muted p-3 rounded-xl flex-1 truncate text-muted-foreground">
+                {deviceId}
               </p>
               <Button
-                variant="ghost"
+                variant="glass"
                 size="icon"
                 onClick={copyToClipboard}
-                className="w-9 h-9"
+                className="w-10 h-10 rounded-xl"
               >
                 {copied ? (
                   <Check className="w-4 h-4 text-success" />
@@ -284,11 +297,11 @@ export default function ProfilePage() {
         <Button
           onClick={handleSignOut}
           disabled={loading}
-          className="w-full gap-2"
+          className="w-full gap-2 rounded-[1.5rem]"
           variant="destructive"
         >
           <LogOut className="w-4 h-4" />
-          {loading ? "Signing out..." : "Sign Out"}
+          {loading ? "Resetting..." : "Reset Device Identity"}
         </Button>
       </div>
     </Layout>

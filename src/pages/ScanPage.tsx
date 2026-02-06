@@ -106,7 +106,7 @@ export default function ScanPage() {
     try {
       // @ts-expect-error - Supabase table insert type is incorrectly inferred as never
       const { error } = await supabase.from("scans").insert({
-        user_id: deviceId,
+        device_id: deviceId,
         image_url: selectedImage,
         disease_id: result.disease?.id || null,
         confidence: result.confidence,
