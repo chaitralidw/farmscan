@@ -5,8 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 interface AuthContextType {
   deviceId: string;
   loading: boolean;
-  // Keep these as placeholders to prevent breakages, though they won't do anything
-  user: any;
+  user: { id: string } | null;
+  signUp: (email: string, password: string, fullName: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -47,9 +49,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initializeId();
   }, []);
 
+  const signUp = async (email: string, password: string, fullName: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    });
+    if (error) throw error;
+  };
+
+  const signIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+  };
+
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+    if (error) throw error;
+  };
+
   const signOut = async () => {
-    // For device ID auth, signOut might just clear data or do nothing
-    console.log("Device-based auth: signOut called (clearing localStorage)");
+    await supabase.auth.signOut();
     localStorage.removeItem('cropguard_device_id');
     window.location.reload();
   };
@@ -59,7 +88,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         deviceId,
         loading,
-        user: deviceId ? { id: deviceId } : null, // Mock user object for compatibility
+        user: deviceId ? { id: deviceId } : null,
+        signUp,
+        signIn,
+        signInWithGoogle,
         signOut,
       }}
     >

@@ -17,6 +17,8 @@ import ProfilePage from "./pages/ProfilePage";
 import ResultDetailsPage from "./pages/ResultDetailsPage";
 import NotFound from "./pages/NotFound";
 
+import DiseaseDetailPage from "./pages/DiseaseDetailPage";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -52,6 +54,10 @@ const App = () => (
               <Route
                 path="/diseases"
                 element={<ProtectedRoute element={<DiseasesPage />} />}
+              />
+              <Route
+                path="/diseases/:id"
+                element={<ProtectedRoute element={<DiseaseDetailPage />} />}
               />
               <Route
                 path="/alerts"

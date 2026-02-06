@@ -56,25 +56,39 @@ export default function DiseasesPage() {
         </div>
 
         {/* Crop Filter Tabs */}
-        <Tabs defaultValue="all" onValueChange={setSelectedCrop}>
-          <TabsList className="w-full justify-start overflow-x-auto">
-            <TabsTrigger value="all">{t("common.all")}</TabsTrigger>
-            {crops.map(crop => (
-              <TabsTrigger key={crop.id} value={crop.id}>
-                {crop.icon} {language === 'hi' ? crop.nameHindi : crop.name}
+        <Tabs defaultValue="all" onValueChange={setSelectedCrop} className="w-full">
+          <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+            <TabsList className="w-full justify-start overflow-x-auto overflow-y-hidden flex-nowrap scrollbar-none px-4 bg-transparent border-0 gap-2 h-12">
+              <TabsTrigger 
+                value="all" 
+                className="rounded-full px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border-border/50 border shrink-0"
+              >
+                {t("common.all")}
               </TabsTrigger>
-            ))}
-          </TabsList>
+              {crops.map(crop => (
+                <TabsTrigger 
+                  key={crop.id} 
+                  value={crop.id}
+                  className="rounded-full px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border-border/50 border shrink-0 gap-2"
+                >
+                  <span className="text-lg">{crop.icon}</span> 
+                  <span>{language === 'hi' ? crop.nameHindi : crop.name}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+          </div>
         </Tabs>
 
         {/* Disease List */}
-        <div className="space-y-3">
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
           {filteredDiseases.length > 0 ? (
             filteredDiseases.map(disease => (
               <DiseaseCard 
                 key={disease.id} 
                 disease={disease}
-                onClick={() => {/* Navigate to disease detail */}}
+                onClick={() => navigate(`/diseases/${disease.id}`)}
               />
             ))
           ) : (
