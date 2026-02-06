@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useLanguage, availableLanguages } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { ReadAloudButton } from "@/components/ui/ReadAloudButton";
 
 export function Header() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export function Header() {
             <Leaf className="w-5 h-5 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-lg font-black text-foreground tracking-tight">CropGuard</h1>
+            <h1 className="text-lg font-black text-foreground tracking-tight">FarmScan</h1>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">
               AI Intelligence
             </p>
@@ -31,6 +32,8 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-2">
+          <ReadAloudButton />
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button

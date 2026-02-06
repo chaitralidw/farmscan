@@ -9,8 +9,8 @@ import React, {
 import { Language } from "@/types/disease";
 
 export const availableLanguages: { code: Language; label: string }[] = [
-  { code: "en", label: "EN" },
-  { code: "hi", label: "हि" },
+  { code: "en", label: "English" },
+  { code: "hi", label: "हिन्दी" },
   { code: "bn", label: "বাংলা" },
   { code: "te", label: "తెలుగు" },
   { code: "mr", label: "मराठी" },
@@ -430,10 +430,66 @@ const initialTranslations: Record<string, Record<Language, string>> = {
   "common.startFirstScan": {
     en: "Start Your First Scan",
     hi: "अपना पहला स्कैन शुरू करें",
-    bn: "আপনার প্রথম স্ক্যান শুরু করুন",
+    bn: "আপনার প্রথম স্ক্যান শুরু करें",
     te: "మీ మొదటి స్కాన్ ప్రారంభించండి",
     mr: "आपले पहिले स्कॅन सुरू करा",
     ta: "உங்கள் முதல் ஸ்கேனைத் தொடங்குங்கள்",
+  },
+  "profile.title": {
+    en: "Profile & Settings",
+    hi: "प्रोफ़ाइल और सेटिंग्स",
+    bn: "প্রোফাইল এবং সেটিংস",
+    te: "ప్రొఫైల్ మరియు సెట్టింగ్‌లు",
+    mr: "प्रोफाइल आणि सेटिंग्ज",
+    ta: "சுயவிவரம் மற்றும் அமைப்புகள்",
+  },
+  "profile.stats": {
+    en: "Statistics",
+    hi: "आंकड़े",
+    bn: "পরিসংখ্যান",
+    te: "గణాంకాలు",
+    mr: "आकडेवारी",
+    ta: "புள்ளிவிவரங்கள்",
+  },
+  "profile.settings": {
+    en: "Settings",
+    hi: "सेटिंग्स",
+    bn: "সেটিংস",
+    te: "సెట్టింగ్‌లు",
+    mr: "सेटिंग्ज",
+    ta: "அமைப்புகள்",
+  },
+  "profile.reset": {
+    en: "Reset Device Identity",
+    hi: "डिवाइस आईडी रीसेट करें",
+    bn: "ডিভাইস আইডি রিসেট করুন",
+    te: "డివైస్ గుర్తింపును రీసెట్ చేయండి",
+    mr: "डिव्हाइस ओळख रीसेट करा",
+    ta: "சாதன அடையாளத்தை மீட்டமைக்கவும்",
+  },
+  "profile.notifications": {
+    en: "Notifications",
+    hi: "सूचनाएं",
+    bn: "বিজ্ঞপ্তি",
+    te: "నోటిఫికేషన్‌లు",
+    mr: "सूचना",
+    ta: "அறிவிப்புகள்",
+  },
+  "profile.darkMode": {
+    en: "Dark Mode",
+    hi: "डार्क मोड",
+    bn: "ডার্ক মোড",
+    te: "డార్క్ మోడ్",
+    mr: "डार्क मोड",
+    ta: "இருண்ட பயன்முறை",
+  },
+  "history.seeAll": {
+    en: "See All",
+    hi: "सभी देखें",
+    bn: "সব দেখুন",
+    te: "అన్నీ చూడండి",
+    mr: "सर्व पहा",
+    ta: "அனைத்தையும் பார்",
   },
 };
 

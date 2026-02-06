@@ -15,7 +15,7 @@ type ScanRecord = Tables<"scans">;
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { deviceId, signOut } = useAuth();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
   const [error, setError] = useState("");
@@ -119,7 +119,7 @@ export default function ProfilePage() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-foreground">
-            Profile & Settings
+            {t('profile.title')}
           </h1>
         </div>
 
@@ -188,7 +188,7 @@ export default function ProfilePage() {
 
         {/* Scan Statistics */}
         <Card className="p-6 space-y-4">
-          <h2 className="font-bold text-lg">Statistics</h2>
+          <h2 className="font-bold text-lg">{t('profile.stats')}</h2>
           {statsLoading ? (
             <div className="flex justify-center py-8">
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -198,21 +198,21 @@ export default function ProfilePage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-4 bg-muted rounded-lg border border-border/50">
                   <p className="text-3xl font-bold text-primary">{stats.totalScans}</p>
-                  <p className="text-sm text-muted-foreground">Total Scans</p>
+                  <p className="text-sm text-muted-foreground">{t('home.totalScans')}</p>
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg border border-border/50">
                   <p className="text-3xl font-bold text-success">{stats.healthyPlants}</p>
-                  <p className="text-sm text-muted-foreground">Healthy Plants</p>
+                  <p className="text-sm text-muted-foreground">{t('home.healthyPlants')}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 pt-2">
                 <div className="text-center p-4 bg-muted rounded-lg border border-border/50">
                   <p className="text-3xl font-bold text-warning">{stats.diseasesFound}</p>
-                  <p className="text-sm text-muted-foreground">Diseases Found</p>
+                  <p className="text-sm text-muted-foreground">{t('home.diseasesFound')}</p>
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg border border-border/50">
                   <p className="text-3xl font-bold text-accent">{stats.avgConfidence}%</p>
-                  <p className="text-sm text-muted-foreground">Avg Confidence</p>
+                  <p className="text-sm text-muted-foreground">{t('result.confidence')}</p>
                 </div>
               </div>
             </>
@@ -221,14 +221,14 @@ export default function ProfilePage() {
 
         {/* Settings */}
         <Card className="p-6 space-y-4">
-          <h2 className="font-bold text-lg">Settings</h2>
+          <h2 className="font-bold text-lg">{t('profile.settings')}</h2>
 
           {/* Notifications */}
           <div className="flex items-center justify-between pb-3 border-b border-border">
             <div className="flex items-center gap-3">
               <Bell className="w-5 h-5 text-primary" />
               <div>
-                <p className="text-sm font-medium">Notifications</p>
+                <p className="text-sm font-medium">{t('profile.notifications')}</p>
                 <p className="text-xs text-muted-foreground">
                   Get alerts for disease detection
                 </p>
@@ -247,15 +247,7 @@ export default function ProfilePage() {
               <p className="text-xs text-muted-foreground">
                 Current:{" "}
                 {(() => {
-                  const map: Record<string, string> = {
-                    en: "English",
-                    hi: "हिन्दी",
-                    bn: "বাংলা",
-                    te: "తెలుగు",
-                    mr: "मराठी",
-                    ta: "தமிழ்",
-                  };
-                  return map[language] || language;
+                  return availableLanguages.find(l => l.code === language)?.label || language;
                 })()}
               </p>
             </div>
@@ -285,7 +277,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-3">
               <Moon className="w-5 h-5 text-primary" />
               <div>
-                <p className="text-sm font-medium">Dark Mode</p>
+                <p className="text-sm font-medium">{t('profile.darkMode')}</p>
                 <p className="text-xs text-muted-foreground">Coming soon</p>
               </div>
             </div>
@@ -301,7 +293,7 @@ export default function ProfilePage() {
           variant="destructive"
         >
           <LogOut className="w-4 h-4" />
-          {loading ? "Resetting..." : "Reset Device Identity"}
+          {loading ? "Resetting..." : t('profile.reset')}
         </Button>
       </div>
     </Layout>
