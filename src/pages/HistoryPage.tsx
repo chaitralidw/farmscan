@@ -5,6 +5,7 @@ import { Layout } from '@/components/layout/Layout';
 import { RecentScanCard } from '@/components/home/RecentScanCard';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ScanResult } from '@/types/disease';
+import { Tables } from '@/integrations/supabase/types';
 import { diseases } from '@/data/diseases';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -34,18 +35,28 @@ export default function HistoryPage() {
 
         if (error) throw error;
 
-        // Map database records to ScanResult type
-        const formattedScans: ScanResult[] = data.map(record => ({
-          id: record.id,
-          imageUrl: record.image_url,
-          timestamp: new Date(record.created_at),
-          disease: diseases.find(d => d.id === record.disease_id) || null,
-          confidence: record.confidence || 0,
-          isHealthy: record.is_healthy,
-          crop: diseases.find(d => d.id === record.disease_id)?.crop || 'unknown',
-        }));
+        if (data) {
+          // Map database records to ScanResult type
+          const formattedScans: ScanResult[] = data.map((record: Tables<"scans">) => {
+            const diseaseId = record.disease_id || "";
+            const foundDisease = diseases.find(d => d.id === diseaseId) || null;
+            
+            // Try to extract crop from disease_id (e.g., 'tomato-late-blight' -> 'tomato')
+            const fallbackCrop = diseaseId.split('-')[0] || 'unknown';
+            
+            return {
+              id: record.id,
+              imageUrl: record.image_url,
+              timestamp: record.created_at ? new Date(record.created_at) : new Date(),
+              disease: foundDisease,
+              confidence: record.confidence || 0,
+              isHealthy: record.is_healthy,
+              crop: foundDisease?.crop || fallbackCrop,
+            };
+          });
 
-        setScans(formattedScans);
+          setScans(formattedScans);
+        }
       } catch (error) {
         console.error("Error fetching scans:", error);
       } finally {
@@ -82,7 +93,6 @@ export default function HistoryPage() {
               <RecentScanCard 
                 key={scan.id} 
                 scan={scan}
-                onClick={() => navigate(`/result/${scan.id}`)}
               />
             ))
           ) : (

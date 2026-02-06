@@ -47,19 +47,19 @@ export default function AlertsPage() {
     fetchAlerts();
   }, [user]);
 
-  const markAsRead = async (alertId: string) => {
-    try {
-      const { error } = await supabase
-        .from("alerts")
-        .update({ is_read: true })
-        .eq("id", alertId);
+  // const markAsRead = async (alertId: string) => {
+  //   try {
+  //     const { error } = await supabase
+  //       .from("alerts")
+  //       .update({ is_read: true })
+  //       .eq("id", alertId);
       
-      if (error) throw error;
-      setAlerts(prev => prev.map(a => a.id === alertId ? { ...a, is_read: true } : a));
-    } catch (error) {
-      console.error("Error marking alert as read:", error);
-    }
-  };
+  //     if (error) throw error;
+  //     setAlerts(prev => prev.map(a => a.id === alertId ? { ...a, is_read: true } : a));
+  //   } catch (error) {
+  //     console.error("Error marking alert as read:", error);
+  //   }
+  // };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -116,7 +116,7 @@ export default function AlertsPage() {
                 key={alert.id} 
                 variant="interactive" 
                 className={`p-4 ${!alert.is_read ? 'border-l-4 border-l-primary' : ''}`}
-                onClick={() => markAsRead(alert.id)}
+                // onClick={() => markAsRead(alert.id)}
               >
                 <div className="flex items-start gap-3">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-destructive/20 to-warning/20 flex items-center justify-center">
