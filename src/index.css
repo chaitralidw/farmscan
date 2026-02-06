@@ -145,4 +145,10 @@
   .text-gradient {
     @apply text-primary animate-pulse-gentle;
   }
+
+  .speech-highlight {
+    @apply bg-primary/20 text-primary transition-all duration-300 rounded px-1;
+    transform: scale(1.02);
+    display: inline-block;
+  }
 }

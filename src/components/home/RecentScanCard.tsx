@@ -63,8 +63,8 @@ export function RecentScanCard({ scan, onClick }: RecentScanCardProps) {
       
       <div className="flex-1 min-w-0 py-1">
         <div className="flex items-center gap-2 mb-1.5">
-          <span className="text-xl leading-none">{scan.crop === 'tomato' ? '🍅' : scan.crop === 'potato' ? '🥔' : '🌶️'}</span>
-          <h3 className="font-bold text-foreground truncate tracking-tight">
+          <span className="text-xl leading-none readable">{scan.crop === 'tomato' ? '🍅' : scan.crop === 'potato' ? '🥔' : '🌶️'}</span>
+          <h3 className="font-bold text-foreground truncate tracking-tight readable">
             {scan.isHealthy 
               ? t('result.healthy')
               : language === 'hi' 

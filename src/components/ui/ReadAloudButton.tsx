@@ -10,7 +10,7 @@ interface ReadAloudButtonProps {
 }
 
 export const ReadAloudButton = ({ className, variant = "inline" }: ReadAloudButtonProps) => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const { isSpeaking, readPage, stop } = useSpeech(language);
 
   const handleClick = () => {
@@ -23,22 +23,35 @@ export const ReadAloudButton = ({ className, variant = "inline" }: ReadAloudButt
 
   if (variant === "floating") {
     return (
-      <Button
-        onClick={handleClick}
-        variant="glass"
-        size="icon"
-        className={cn(
-          "fixed bottom-24 right-6 w-14 h-14 rounded-full shadow-2xl z-50 transition-all duration-300",
-          isSpeaking ? "bg-primary text-white scale-110 shadow-primary/40 animate-pulse" : "bg-background/80",
-          className
+      <div className={cn(
+        "fixed bottom-24 right-4 sm:right-8 flex flex-col items-end gap-2 group z-50 transition-all duration-500",
+        isSpeaking ? "scale-100" : "scale-95"
+      )}>
+        {isSpeaking && (
+          <div className="bg-primary/90 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-xs font-bold shadow-xl border border-white/20 animate-in fade-in slide-in-from-bottom-2 duration-300 mr-2 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+            {t("common.readingAloud") !== "common.readingAloud" ? t("common.readingAloud") : "Reading Aloud..."}
+          </div>
         )}
-      >
-        {isSpeaking ? (
-          <VolumeX className="w-6 h-6" />
-        ) : (
-          <Volume2 className="w-6 h-6" />
-        )}
-      </Button>
+        <Button
+          onClick={handleClick}
+          variant="glass"
+          size="icon"
+          className={cn(
+            "w-14 h-14 rounded-full shadow-2xl transition-all duration-500",
+            isSpeaking 
+              ? "bg-primary text-white scale-110 shadow-primary/40 ring-4 ring-primary/20" 
+              : "bg-background/80 hover:bg-background border-border",
+            className
+          )}
+        >
+          {isSpeaking ? (
+            <VolumeX className="w-6 h-6" />
+          ) : (
+            <Volume2 className="w-6 h-6" />
+          )}
+        </Button>
+      </div>
     );
   }
 
@@ -46,18 +59,27 @@ export const ReadAloudButton = ({ className, variant = "inline" }: ReadAloudButt
     <Button
       onClick={handleClick}
       variant="ghost"
-      size="icon"
+      size="sm"
       className={cn(
-        "rounded-2xl transition-all duration-300",
-        isSpeaking ? "text-primary animate-pulse" : "text-muted-foreground",
+        "rounded-2xl transition-all duration-500 h-10 px-3",
+        isSpeaking 
+          ? "bg-primary/10 text-primary ring-1 ring-primary/20 shadow-sm" 
+          : "text-muted-foreground",
         className
       )}
     >
-      {isSpeaking ? (
-        <VolumeX className="w-5 h-5" />
-      ) : (
-        <Volume2 className="w-5 h-5" />
-      )}
+      <div className="flex items-center gap-2">
+        {isSpeaking ? (
+          <>
+            <VolumeX className="w-4 h-4" />
+            <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:inline">
+              {t("common.readingAloud") !== "common.readingAloud" ? t("common.readingAloud") : "Reading..."}
+            </span>
+          </>
+        ) : (
+          <Volume2 className="w-4 h-4" />
+        )}
+      </div>
     </Button>
   );
 };

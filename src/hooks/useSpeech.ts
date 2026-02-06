@@ -1,9 +1,12 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Language } from '@/types/disease';
 
 export const useSpeech = (language: Language) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [synth, setSynth] = useState<SpeechSynthesis | null>(null);
+  const currentElementRef = useRef<HTMLElement | null>(null);
+  const elementsToReadRef = useRef<HTMLElement[]>([]);
+  const currentIndexRef = useRef(0);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -11,21 +14,39 @@ export const useSpeech = (language: Language) => {
     }
   }, []);
 
+  const clearHighlight = useCallback(() => {
+    if (currentElementRef.current) {
+      currentElementRef.current.classList.remove('speech-highlight');
+      currentElementRef.current = null;
+    }
+  }, []);
+
   const stop = useCallback(() => {
     if (synth) {
       synth.cancel();
+      clearHighlight();
       setIsSpeaking(false);
+      currentIndexRef.current = 0;
+      elementsToReadRef.current = [];
     }
-  }, [synth]);
+  }, [synth, clearHighlight]);
 
-  const speak = useCallback((text: string) => {
-    if (!synth) return;
+  const speakSequentially = useCallback((index: number) => {
+    if (!synth || index >= elementsToReadRef.current.length) {
+      setIsSpeaking(false);
+      clearHighlight();
+      return;
+    }
 
-    stop();
+    clearHighlight();
+    const el = elementsToReadRef.current[index];
+    currentElementRef.current = el;
+    el.classList.add('speech-highlight');
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
+    const text = el.innerText;
     const utterance = new SpeechSynthesisUtterance(text);
     
-    // Map our language codes to browser BCP 47 tags
     const langMap: Record<string, string> = {
       en: 'en-US',
       hi: 'hi-IN',
@@ -37,34 +58,45 @@ export const useSpeech = (language: Language) => {
 
     utterance.lang = langMap[language] || 'en-US';
     
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => {
+      currentIndexRef.current = index + 1;
+      speakSequentially(index + 1);
+    };
+
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      clearHighlight();
+    };
 
     synth.speak(utterance);
-  }, [synth, language, stop]);
+  }, [synth, language, clearHighlight]);
 
   const readPage = useCallback(() => {
     if (!synth) return;
 
+    stop();
+
     // Find all readable content
-    const elements = document.querySelectorAll('h1, h2, h3, h4, p, span.readable');
-    const textToRead = Array.from(elements)
-      .map(el => (el as HTMLElement).innerText)
-      .filter(text => text.length > 2)
-      .join('. ');
+    const elements = document.querySelectorAll('h1, h2, h3, h4, p, label, .stat-value, .scan-label, span.readable');
+    const validElements = Array.from(elements).filter(el => 
+      (el as HTMLElement).innerText.trim().length > 1 && 
+      !(el as HTMLElement).closest('button') &&
+      !(el as HTMLElement).closest('nav')
+    ) as HTMLElement[];
 
-    if (textToRead) {
-      speak(textToRead);
+    if (validElements.length > 0) {
+      elementsToReadRef.current = validElements;
+      currentIndexRef.current = 0;
+      setIsSpeaking(true);
+      speakSequentially(0);
     }
-  }, [synth, speak]);
+  }, [synth, stop, speakSequentially]);
 
-  // Clean up on unmount
   useEffect(() => {
     return () => {
       if (synth) synth.cancel();
     };
   }, [synth]);
 
-  return { speak, stop, isSpeaking, readPage };
+  return { stop, isSpeaking, readPage };
 };
